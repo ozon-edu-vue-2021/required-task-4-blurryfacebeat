@@ -1,5 +1,7 @@
 <template>
-  <p @click="clickHandler">fwqfwq</p>
+  <p :class="isActiveItem ? 'active' : ''" @click="clickHandler">
+    {{ item[selectionField] }}
+  </p>
 </template>
 
 <script>
@@ -7,12 +9,27 @@ export default {
   name: 'SelectItem',
   props: {
     item: {
-      default: () => {}
+      required: true
+    },
+    selectionField: {
+      type: String,
+      default: 'type'
+    },
+    activeItem: {
+      default: null
     }
   },
   methods: {
     clickHandler() {
       this.$emit('click', this.item);
+    }
+  },
+  computed: {
+    isActiveItem() {
+      return this.activeItem
+        ? this.activeItem[this.selectionField] ===
+            this.item[this.selectionField]
+        : false;
     }
   }
 };

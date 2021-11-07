@@ -4,18 +4,19 @@
       label
     }}</span>
     <div class="select-dropdown">
-      <div
+      <input
         :class="['dropdown-input', isDropdownActive ? 'active' : '']"
         ref="dropdown-input"
-        tabindex="0"
-        contenteditable="true"
         @focus="setDropdownActive"
-      ></div>
+        v-model.trim="search"
+      />
       <div class="dropdown-list" v-if="isDropdownActive">
         <SelectItem
-          v-for="item in items"
+          v-for="item in filteredItems"
           :key="item.id"
           :item="item"
+          :selectionField="selectionField"
+          :activeItem="activeItem"
           @click="itemClickHandler"
         />
       </div>
@@ -39,11 +40,23 @@ export default {
     items: {
       type: Array,
       required: true
+    },
+
+    selectionField: {
+      type: String,
+      default: 'type'
+    },
+
+    withSearch: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      isDropdownActive: false
+      isDropdownActive: false,
+      activeItem: null,
+      search: ''
     };
   },
   methods: {
@@ -61,7 +74,17 @@ export default {
     },
 
     itemClickHandler(data) {
-      console.log(data);
+      this.search = data[this.selectionField];
+      this.activeItem = data;
+    }
+  },
+  computed: {
+    filteredItems() {
+      return this.items.filter((item) =>
+        item[this.selectionField]
+          .toLowerCase()
+          .includes(this.search.toLowerCase())
+      );
     }
   }
 };
@@ -119,10 +142,11 @@ export default {
 
 .dropdown-list {
   width: 100%;
-  height: 300px;
+  max-height: 300px;
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  overscroll-behavior-y: contain;
 
   border: 2px solid #005bff;
   border-top: none;

@@ -1,7 +1,11 @@
 <template>
   <div class="passport-data">
     <Heading class="title" heading-type="h2">Паспортные данные</Heading>
-    <Select label="Граджанство" :items="citizenship" />
+    <Select
+      label="Гражданство"
+      :items="citizenship"
+      selection-field="nationality"
+    />
   </div>
 </template>
 
