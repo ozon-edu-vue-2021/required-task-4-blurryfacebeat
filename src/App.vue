@@ -1,36 +1,35 @@
 <template>
   <div id="app">
-    <Form />
+    <HomePage />
   </div>
 </template>
 
 <script>
-import Form from "./components/Form.vue";
+import HomePage from '@/View/HomePage';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    Form,
-  },
+    HomePage
+  }
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  color: #2c3e50;
-  background-color: #fafafa;
-  padding: 24px;
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');
+
+* {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html,
 body,
 #app {
   height: 100%;
-}
 
-* {
-  box-sizing: border-box;
+  color: #001a34;
+  font-family: 'Raleway', sans-serif;
 }
 </style>
