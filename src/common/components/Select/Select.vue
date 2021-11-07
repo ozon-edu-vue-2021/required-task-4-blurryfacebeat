@@ -1,8 +1,11 @@
 <template>
   <div class="select-container" v-click-outside="setDropdownDeactivated">
-    <span class="select-label" v-if="label" @click="setInputActive">{{
-      label
-    }}</span>
+    <span
+      :class="['select-label', isDropdownActive ? 'active' : '']"
+      v-if="label"
+      @click="setInputActive"
+      >{{ label }}</span
+    >
     <div class="select-dropdown">
       <input
         :class="['dropdown-input', isDropdownActive ? 'active' : '']"
@@ -71,6 +74,7 @@ export default {
 
     setDropdownDeactivated() {
       this.isDropdownActive = false;
+      console.log(this.$refs['dropdown-input'].focus);
     },
 
     itemClickHandler(data) {
@@ -97,10 +101,6 @@ export default {
   flex-direction: column;
 }
 
-.select-container:focus-within .select-label {
-  color: #005bff;
-}
-
 .select-label {
   margin-bottom: 5px;
 
@@ -108,6 +108,10 @@ export default {
   color: #a4afb9;
 
   transition: all 0.2s ease;
+}
+
+.select-label.active {
+  color: #005bff;
 }
 
 .dropdown-input {
@@ -130,10 +134,6 @@ export default {
 
 .dropdown-input::-webkit-scrollbar {
   display: none;
-}
-
-.dropdown-input:focus {
-  border-color: #005bff;
 }
 
 .dropdown-input.active {
