@@ -24,11 +24,17 @@
       </div>
       <div class="birthday">
         <TextInput
-          subtitle="Дата должна иметь вид 22.12.1993 и быть не позже сегодняшнего дня"
           title="Дата рождения"
           v-model.trim="formData.birthday"
           placeholder="дд.мм.гггг"
           v-mask="'##.##.####'"
+          @input="$v.formData.birthday.$touch()"
+          :subtitle="
+            $v.formData.birthday.$error
+              ? 'Поле должно быть заполнено в формате дд.мм.гггг, а дата должна быть не позже сегодняшней'
+              : ''
+          "
+          :error-validate="$v.formData.birthday.$error"
         />
       </div>
       <div class="email">
@@ -37,6 +43,13 @@
           title="E-mail"
           v-model.trim="formData.email"
           placeholder="ivanov.ivan@example.io"
+          @input="$v.formData.email.$touch()"
+          :subtitle="
+            $v.formData.email.$error
+              ? 'Поле email должны быть заполнено в формате ivanov.ivam@example.io'
+              : ''
+          "
+          :error-validate="$v.formData.email.$error"
         />
       </div>
       <div class="sex">
@@ -61,12 +74,24 @@
           v-model.trim="formData.passportSerial"
           v-mask="'####'"
           placeholder="1234"
+          :subtitle="
+            $v.formData.passportSerial.$invalid
+              ? `Серия паспорта должна иметь ${$v.formData.passportSerial.$params.minLength.min} символов`
+              : ''
+          "
+          :error-validate="$v.formData.passportSerial.$invalid"
         />
         <TextInput
           title="Номер паспорта"
           v-model.trim="formData.passportNumber"
           v-mask="'######'"
           placeholder="123456"
+          :subtitle="
+            $v.formData.passportNumber.$invalid
+              ? `Номер паспорта должен иметь ${$v.formData.passportNumber.$params.minLength.min} символов`
+              : ''
+          "
+          :error-validate="$v.formData.passportNumber.$invalid"
         />
         <TextInput
           title="Дата выдачи"
@@ -135,7 +160,6 @@
           />
         </div>
       </div>
-      {{ JSON.stringify(formData, true, 2) }}
     </div>
     <ButtonComponent class="button" @click="sendData"
       >Отправить</ButtonComponent
@@ -144,6 +168,9 @@
 </template>
 
 <script>
+import { minLength } from 'vuelidate/lib/validators';
+import moment from 'moment';
+
 import ButtonComponent from '@/common/components/Button/ButtonComponent';
 import TextInput from '@/common/components/TextInput/TextInput';
 import Heading from '@/common/components/Heading/Heading';
@@ -197,8 +224,50 @@ export default {
     setPassportType(data) {
       this.formData.passportType = data['type'];
     },
+
     sendData() {
-      console.log('Data: ', this.formData);
+      if (this.$v.$invalid) {
+        window.alert('Сначала заполните все поля по правилам!');
+      } else {
+        console.log('Data: ', this.formData);
+      }
+    }
+  },
+  validations: {
+    formData: {
+      birthday: {
+        validFormat: (val) => {
+          if (val) {
+            return /^(0[1-9]|1[0-2]).(0[1-9]|1\d|2\d|3[01]).(19|20)\d{2}$/.test(
+              val
+            );
+          } else {
+            return true;
+          }
+        },
+        validDate: (val) => {
+          if (val) {
+            return !moment(val).isAfter(moment(new Date()));
+          } else {
+            return true;
+          }
+        }
+      },
+      email: {
+        validFormat: (val) => {
+          if (val) {
+            return /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(val);
+          } else {
+            return true;
+          }
+        }
+      },
+      passportSerial: {
+        minLength: minLength(4)
+      },
+      passportNumber: {
+        minLength: minLength(6)
+      }
     }
   }
 };

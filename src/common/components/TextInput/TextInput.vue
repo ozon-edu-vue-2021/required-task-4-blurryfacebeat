@@ -1,8 +1,10 @@
 <template>
-  <label class="input-container">
-    <span class="input-title" v-if="title">{{ title }}</span>
-    <input v-bind="$attrs" @input="inputHandler($event)" />
-    <span class="input-subtitle" v-if="subtitle">{{ subtitle }}</span>
+  <label :class="['input-container', errorClass]">
+    <span :class="['input-title', errorClass]" v-if="title">{{ title }}</span>
+    <input :class="errorClass" v-bind="$attrs" @input="inputHandler($event)" />
+    <span :class="['input-subtitle', errorClass]" v-if="subtitle">{{
+      subtitle
+    }}</span>
   </label>
 </template>
 
@@ -21,12 +23,22 @@ export default {
 
     value: {
       type: String
+    },
+
+    errorValidate: {
+      type: Boolean,
+      default: false
     }
   },
 
   methods: {
     inputHandler(event) {
       this.$emit('input', event.target.value);
+    }
+  },
+  computed: {
+    errorClass() {
+      return this.errorValidate ? 'error-validate' : '';
     }
   }
 };
@@ -80,5 +92,21 @@ input::placeholder {
   font-size: 12px;
   font-weight: 500;
   color: #a4afb9;
+}
+
+.error-validate {
+  color: #f32828;
+
+  border-color: #f32828;
+}
+
+.error-validate:focus {
+  color: #f32828;
+
+  border-color: #f32828;
+}
+
+.input-container.error-validate:focus-within .input-title {
+  color: #f32828;
 }
 </style>

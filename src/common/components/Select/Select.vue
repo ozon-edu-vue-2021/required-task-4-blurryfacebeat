@@ -90,6 +90,7 @@ export default {
       this.search = data[this.selectionField];
       this.activeItem = data;
       this.$emit('sendActiveItem', this.activeItem);
+      this.setDropdownDeactivated();
     },
 
     toLower(item) {
@@ -113,15 +114,10 @@ export default {
   },
   computed: {
     filteredItems() {
-      return this.items.filter(
-        (item) =>
-          this.toLower(item[this.selectionField]).includes(
-            this.toLower(this.search)
-          ) &&
-          this.toLower(item[this.selectionField]) !==
-            this.toLower(
-              this.activeItem ? this.activeItem[this.selectionField] : ''
-            )
+      return this.items.filter((item) =>
+        this.toLower(item[this.selectionField]).includes(
+          this.toLower(this.search)
+        )
       );
     }
   },
